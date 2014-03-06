@@ -26,6 +26,8 @@ struct wordEntry
 
 int FileSize(std::string fileName);
 
+std::vector<wordEntry> IndexFile(std::string fileName);
+
 int main (int argc, char* argv[])
 {
     int threadAmount;
@@ -33,6 +35,7 @@ int main (int argc, char* argv[])
     int fileSize;
     std::string fileName;
     std::ifstream inFile(argv[2]);
+    std::vector<wordEntry> indexedFile;
 
     if (argc == 3)
     {
@@ -73,10 +76,39 @@ int main (int argc, char* argv[])
     std::cout << "There will be " << sizePerThread
               << " bytes per thread." << std::endl;
 
+    indexedFile = IndexFile(fileName);    
+
+    for (int i = 0; i < indexedFile.size(); i++)
+    {
+        std::cout << indexedFile.at(i).word << ":\t";
+        for (int j = 0; j < indexedFile.at(i).location.size(); j++)
+        {
+            std::cout << indexedFile.at(i).location.at(j) << "\t";
+        }
+        std::cout << std::endl;
+    }
+
+}
+
+int FileSize(std::string fileName)
+{
+    std::ifstream file;
+    std::streampos begin, end;
+    file.open(fileName.c_str());
+    begin = file.tellg();
+    file.seekg (0, std::ios::end);
+    end = file.tellg();
+    file.close();
+    return (end-begin);
+}
+
+std::vector<wordEntry> IndexFile(std::string fileName)
+{
+    std::ifstream inFile;
     std::vector<wordEntry> index;
     std::string word;
     char lastChar, firstChar;
-    inFile.open(argv[2]);
+    inFile.open(fileName.c_str());
 //  TODO limit this loop to the amount of bytes per thread and somewhere around
 //       here I need to determin if i am at the beinging of a word or what if i
 //       start in the middle of a word.
@@ -148,26 +180,5 @@ int main (int argc, char* argv[])
             }
         }
     }
-    
-    for (int i = 0; i < index.size(); i++)
-    {
-        std::cout << index.at(i).word << ":\t";
-        for (int j = 0; j < index.at(i).location.size(); j++)
-        {
-            std::cout << index.at(i).location.at(j) << "\t";
-        }
-        std::cout << std::endl;
-    }
-}
-
-int FileSize(std::string fileName)
-{
-    std::ifstream file;
-    std::streampos begin, end;
-    file.open(fileName.c_str());
-    begin = file.tellg();
-    file.seekg (0, std::ios::end);
-    end = file.tellg();
-    file.close();
-    return (end-begin);
+    return index;
 }
