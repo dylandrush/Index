@@ -28,6 +28,8 @@ int FileSize(std::string fileName);
 
 std::vector<wordEntry> IndexFile(std::string fileName);
 
+bool compareWordEntry (wordEntry a, wordEntry b) { return (a.word < b.word); }
+
 int main (int argc, char* argv[])
 {
     int threadAmount;
@@ -81,6 +83,10 @@ int main (int argc, char* argv[])
     for (int i = 0; i < indexedFile.size(); i++)
     {
         std::cout << indexedFile.at(i).word << ":\t";
+        if (indexedFile.at(i).word.length() < 7)
+        {
+            std::cout << "\t";
+        }
         for (int j = 0; j < indexedFile.at(i).location.size(); j++)
         {
             std::cout << indexedFile.at(i).location.at(j) << "\t";
@@ -180,5 +186,8 @@ std::vector<wordEntry> IndexFile(std::string fileName)
             }
         }
     }
+
+    std::sort(index.begin(), index.end(), compareWordEntry);
     return index;
 }
+
