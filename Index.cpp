@@ -1,6 +1,8 @@
 /***********************************************/
 /*                COMPILE NOTES                */
 /* g++ Index.cpp -o Index -pthread -std=c++11  */
+/*                      or                     */
+/* g++ Index.cpp -o Index -pthread -std=c++0x  */
 /***********************************************/
 
 /*
