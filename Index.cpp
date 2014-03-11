@@ -197,50 +197,26 @@ void IndexFile(std::string fileName, int offset, int id)
         location = (int)inFile.tellg() - (int)word.length() + 1;
         if (location < searchLimit)
         {
-             int i = 30;
-            // This is a really really bad way to do this, but ohh well...
-            // Just keep looping through an arbitrary amount of times to make sure
-            // that the word has no leading or trailing non alpha characters
-            do {
-                if (word.length() > 1)
+            std::transform(word.begin(), word.end(), word.begin(), ::tolower);
+            firstChar = word[0];
+            lastChar = word[word.length() - 1];
+
+            // If the first or the last char in a word is not a lowercase
+            // letter, throw it out.  Its punctuation.
+            while ((firstChar < 97 || firstChar > 122) && word.length() > 0)
+            {
+                word.erase(0, 1);
+                firstChar = word[0];
+            }
+            if (word.length() > 1)
+            {
+                while (lastChar < 97 || lastChar > 122)
                 {
-                    std::transform(word.begin(), word.end(), word.begin(), ::tolower);
-                    firstChar = word[0];
+                    word.erase(word.length() - 1);
                     lastChar = word[word.length() - 1];
-               
-                    if (firstChar < 97) 
-                    { 
-                        word.erase(0, 1);
-                    }
-                    if (firstChar > 122)
-                    {
-                        word.erase(0, 1);
-                    }
-    
-                    if (lastChar < 97) 
-                    { 
-                        word.erase(word.length() - 1);
-                    }
-                    if (lastChar > 122)
-                    {
-                        word.erase(word.length() - 1);
-                    }   
                 }
-                if (word.length() == 1)
-                {
-                    firstChar = word[0];
-                    if (firstChar < 97)
-                    {
-                        word = "";
-                    }
-                    if (firstChar > 122)
-                    {
-                        word = "";
-                    }
-                }
-                --i;
-            } while (i != 0);
-            
+            }
+
             // Going to now add the word to the index.  Time to lock things up.
             indexMutex.lock(); 
             if (word.length() > 0)
